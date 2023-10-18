@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+<title>Frontend HTML</title>
+<script>
+function submeter() {
+	var requisicao = new XMLHttpRequest();
+	alert('submeteu')
+	requisicao.onreadystatechange = () => {
+    		if (this.readyState == 4 && this.status == 200) {
+       			document.getElementById("saida").innerHTML = requisicao.responseText;
+    			}
+    		}
+    	requisicao.open('POST', '/', true);
+    	
+    	requisicao.send(  {'nome':document.getElementById("nome").value} );
+}
+
+</script>
+</head>
+
+<body style="background-color:#cccccc">
+<h1>Frontend em HTML</h1> 
+
+<input type='text' id='nome' ></input>
+<button id='submete' onclick='submeter()'>Enviar</button>
+<p id='saida'></p>
+</body>
+
+</html>
