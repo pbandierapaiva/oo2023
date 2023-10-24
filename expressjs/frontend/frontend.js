@@ -43,8 +43,19 @@ function getSobre(){
 }
 
 function populaSelect() {
-	alert("popula");
-
+	let sel = document.getElementById('selecPessoa');
+	fetch('/listar')
+		.then( resposta => {
+			if(!resposta.ok) {
+				throw new Error('Resposta da rede n&atilde;o estava ok');
+			}
+			return( resposta.json() );
+		})
+		.then( dado => {
+			dado.forEach( item 
+				sel
+			)
+		})
 }
 
 
