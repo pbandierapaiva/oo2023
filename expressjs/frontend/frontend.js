@@ -19,6 +19,7 @@ function submeter() {
 		})
 		.then( dadoRetornado => {
 			document.getElementById('saida').innerHTML = dadoRetornado;
+			populaSelect();
 		})
 		.catch(error => {
         		alert("Erro no POST");
@@ -43,7 +44,7 @@ function getSobre(){
 }
 
 function populaSelect() {
-	let sel = document.getElementById('selecPessoa');
+
 	fetch('/listar')
 		.then( resposta => {
 			if(!resposta.ok) {
@@ -52,10 +53,14 @@ function populaSelect() {
 			return( resposta.json() );
 		})
 		.then( dado => {
-			dado.forEach( item 
-				sel
-			)
-		})
+			let sel = document.getElementById('selecPessoa');
+			while( sel.options.length > 0 ) sel.remove(0);
+			dado.forEach( item => {
+				let novaOpcao = new Option(item,'Option Value');
+				sel.add(novaOpcao);
+				})
+			})
 }
+
 
 
