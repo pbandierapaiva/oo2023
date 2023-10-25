@@ -30,22 +30,29 @@ app.get('/listar', (req, res) => {
 		})
 })
 
-app.post('/', (req, res) => {
+app.put('/', (req, res) => {
 	console.log(req.body);
     	res.writeHead(200, {'Content-Type': 'text/html'});
-    	res.write("<h2>Dados recebidos! Nome: "+ req.body.nome + "</h2>");
+    	res.write("<h2>Dados recebidos!</h2>");
     	
-    	arq.appendFile("nomes.txt", req.body.nome+"\n", (err) => { 
-		if (err) { 
-			console.log(err); 
-		} 
-		else { 
-			console.log("\nArquivo alterado"); 
-  		} 
+    	arq.appendFile("nomes.txt", req.body.nome+"\n", 
+    		(err) => { 
+			if (err) { 
+				console.log(err); 
+			} 
+			else { 
+				console.log("\nArquivo alterado"); 
+	  		} 
 	}); 	
     	return res.end();
 
 })
+
+app.get('/cep',(req, res) => {
+
+	console.log(req.body);
+
+}
 
 app.listen(port, () => {
   console.log(`Aplicação monitorando porta: ${port}`)
