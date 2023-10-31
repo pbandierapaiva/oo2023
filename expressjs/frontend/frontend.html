@@ -18,11 +18,13 @@
 	    <div class="w3-container w3-padding-large">
 		<input class="w3-input" id='cpoNome' ></input>
 		<button class="w3-btn w3-blue" id='submete' onclick='submeter()'>Enviar</button>
-		<button onclick='getSobre()'><p>Sobre</p></button>
-		Selecione o usuário:
-		<select class="w3-select" nome='pessoa' id='selecPessoa' onchange='selecionou()' >
-		</select>
-	    </div>
+		<button class="w3-btn w3-blue w3-right" onclick='getSobre()'>Sobre	</button>
+		<div  class="w3-card-4">
+			Selecione o usuário:
+			<select class="w3-select" nome='pessoa' id='selecPessoa' onchange='selecionou()' >
+			</select>
+		</div>
+	</div>
 	</div>
 	<div class="w3-container w3-padding-large">
 		<div id='saida' class="w3-card-4 w3-padding" hidden></div>

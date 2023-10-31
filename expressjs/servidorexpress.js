@@ -2,23 +2,28 @@
 
 const express = require('express')
 const arq = require('fs');
-const app = express()
-const port = 3000
+var execute = require('child_process').exec;
+const servidor = express()
+const porta = 3000
 
-app.use(express.json());
-app.use(express.static('frontend'))
+servidor.use(express.json());
+servidor.use(express.static('frontend'))
 
-app.get('/', (req, res) => {
+
+
+
+servidor.get('/', (req, res) => {
 	res.redirect('/frontend.html');
 })
 
-app.get('/sobre', (req, res) => {
+servidor.get('/sobre', (req, res) => {
     	res.writeHead(200, {'Content-Type': 'text/html'});
     	res.write("<h2>Exemplo de backend/frontend em ExpressJS</h2>");	
     	return res.end();
 })
 
-app.get('/listar', (req, res) => {
+servidor.get('/listar', (req, res) => {
+	console.log("processando /listar")
 	arq.readFile('nomes.txt', 'utf8', (err, dados) => {
 		if (err) {
 		    console.error(err);
@@ -30,30 +35,53 @@ app.get('/listar', (req, res) => {
 		})
 })
 
-app.put('/', (req, res) => {
+servidor.get('/listar/:uid', (req,res) => {
+	console.log("processando /listar com parametro: "+req.params['uid'])
+
+	let id = req.params['uid'];
+	arq.readFile('nomes.txt', 'utf8', (err, dados) => {
+		if (err) {
+		    console.error(err);
+		    return;
+		    }
+		let nomes = dados.split("\n");
+		res.json({'nome': nomes[id]} );
+	})
+})
+
+servidor.put('/', (req, res) => {
 	console.log(req.body);
-    	res.writeHead(200, {'Content-Type': 'text/html'});
-    	res.write("<h2>Dados recebidos!</h2>");
-    	
-    	arq.appendFile("nomes.txt", req.body.nome+"\n", 
-    		(err) => { 
-			if (err) { 
-				console.log(err); 
-			} 
-			else { 
-				console.log("\nArquivo alterado"); 
-	  		} 
+	res.writeHead(200, {'Content-Type': 'text/html'});
+	res.write("<h2>Dados recebidos!</h2>");
+	
+	arq.servidorendFile("nomes.txt", req.body.nome+"\n", 
+		(err) => { 
+		if (err) { 
+			console.log(err); 
+		} 
+		else { 
+			console.log("\nArquivo alterado"); 
+		} 
 	}); 	
     	return res.end();
 
 })
 
-app.get('/cep',(req, res) => {
+servidor.get('/cep/:numero', (req, res) => {
+	let numcep = req.params['numero'];
 
-	console.log(req.body);
+    execute("grep ^"+numcep+" /home/pub/datasets/ceps.txt",
+		(error, stdout, stderr) => { 
+			let dados = stdout.split('\t')
+			retorno = { 'cidade' : dados[1],
+				'rua' : dados[3].split(' - ')[0]};
+			console.log(retorno);
+			res.json(retorno);
+			});
 
-}
 
-app.listen(port, () => {
-  console.log(`Aplicação monitorando porta: ${port}`)
+})
+
+servidor.listen(porta, () => {
+  console.log(`Aplicação monitorando porta: ${porta}`)
 })

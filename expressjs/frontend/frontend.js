@@ -42,33 +42,52 @@ function submeter() {
 function selecionou() {
 	//alert("selecionou "+ document.getElementById('selecPessoa').value);
 	let entraLocal = document.createElement('div');
-	entraLocal.innerHTML= document.getElementById('selecPessoa').value;
-	
-	let saiDiv = document.getElementById('saida');
-	
-	saiDiv.appendChild(entraLocal);
-	saiDiv.hidden = false;
-	
-	cep = document.createElement('input');
-	cep.className = "w3-input";
-	saiDiv.appendChild(cep);
-	cep.addEventListener("keyup", (event) => {
-		if ( event.keyCode == 13 ) {  //apertou enter
-			buscaCep( cep.value );
-			}   
-		});
 
-}
-
-function buscaCep( cep ) {
-
-	fetch('/cep/'+cep).then( resposta => {
+	let uid = document.getElementById('selecPessoa').value;
+	fetch('/listar/'+uid)
+		.then( resposta => {
 			if(!resposta.ok) {
 				throw new Error('Resposta da rede n&atilde;o estava ok');
 			}
-			return( resposta.text() );
+		console.log(resposta);
+		return( resposta.json() )
+		}).then( dado=>{
+			let saiDiv = document.getElementById('saida');
+			let ficha = document.createElement('div');
+			ficha.className = "w3-card4 w3-padding-large";
+			let eleNome = document.createElement('div');
+			eleNome.innerHTML = dado['nome'];
+			let inputCep = document.createElement('input');
+			inputCep.id = "elementoInputCep";
+			inputCep.className = "w3-input";
+			inputCep.onblur = buscaCep;
+
+			ficha.appendChild( eleNome );
+			ficha.appendChild( inputCep );
+			saiDiv.appendChild(ficha);
+			let eleCidade = document.createElement('div');
+			eleCidade.id = 'eCidade'
+			let eleRua  = document.createElement('div');
+			eleRua.id = 'eRua'
+			saiDiv.appendChild(eleCidade);
+			saiDiv.appendChild(eleRua);
+			saiDiv.hidden = false;
+		})
+}
+
+function buscaCep( ) {
+	let cepnum  = document.getElementById('elementoInputCep').value;
+
+	fetch('/cep/'+cepnum).then( resposta => {
+			if(!resposta.ok) {
+				throw new Error('Resposta da rede n&atilde;o estava ok');
+			}
+			return( resposta.json() );
 		}).then( dado => {
-			alert( dado );
+			let saiDiv = document.getElementById('saida');
+			document.getElementById('eCidade').innerHTML = dado['cidade'];
+			document.getElementById('eRua').innerHTML = dado['rua'];
+
 		})
 }
 
