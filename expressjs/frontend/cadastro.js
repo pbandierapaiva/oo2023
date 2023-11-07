@@ -12,7 +12,9 @@ function executaSobre() {
 }
 
 function buscaCep( ) {
-	cepnum = this.value 
+	cepnum = this.value;
+    cepnum = cepnum.replace('-','');
+    this.value = cepnum;
 
 	fetch('/cep/'+cepnum).then( resposta => {
 			if(!resposta.ok) {
@@ -20,13 +22,44 @@ function buscaCep( ) {
 			}
 			return( resposta.json() );
 		}).then( dado => {
-			// let saiDiv = document.getElementById('principal');
-			// document.getElementById('eCidade').innerHTML = dado['cidade'];
-			// document.getElementById('eRua').innerHTML = dado['rua'];
-            alert( dado['cidade']+"   -    "+dado['rua'])
+            if( dado['status']=='ERRO' )
+                alert("Logradouro não encontrado");
+            else {
+                // let saiDiv = document.getElementById('principal');
+                document.getElementById('logradouro').value = dado['rua']+", "+dado['cidade'];
+                // document.getElementById('eRua').innerHTML = dado['rua'];
+                // alert( dado['cidade']+"   -    "+dado['rua'])
+            }
 		})
 }
 
+function submeteForm() {
+        fetch('/', {
+            method: 'PUT',
+            headers: {
+                    'Content-Type': 'application/json',
+                      },
+            body: JSON.stringify(
+                    {
+                        'nome':document.getElementById("nome").value,
+                        'cep' : document.getElementById("cep").value,
+                        'email' :document.getElementById("email").value
+                    })
+            })
+            .then( resposta => {
+                if(!resposta.ok) {
+                    throw new Error('Resposta da rede n&atilde;o estava ok');
+                }
+                return( resposta.text() );
+            })
+            .then( dadoRetornado => {
+                alert(dadoRetornado);
+                // document.getElementById('saida').innerHTML = dadoRetornado;
+                // document.getElementById("cpoNome").value ='';
+                // populaSelect();
+            })
+
+}
 
 function executaIncluir() {
     janelaPrincipal = document.getElementById('principal');
@@ -45,20 +78,48 @@ function executaIncluir() {
     texto.className="w3-text-teal";
     entraNome = document.createElement('input');
     entraNome.className="w3-input w3-border w3-sand";
-    entraNome.name = "nome";
+    entraNome.id = "nome";
 
     texto2 = document.createElement('label');
     texto2.innerHTML= "<b>CEP</b>";
     texto2.className="w3-text-teal";
     entraCep = document.createElement('input');
     entraCep.className="w3-input w3-border w3-sand";
-    entraCep.name = "cep";
+    entraCep.id = "cep";
     entraCep.addEventListener("blur", buscaCep)
+
+    labelEndereco = document.createElement('label');
+    labelEndereco.innerHTML= "<b>Logradouro</b>"
+    labelEndereco.className="w3-text-teal";
+    endereco = document.createElement('input');
+    endereco.className="w3-input w3-border w3-sand";
+    endereco.id = 'logradouro'
+    endereco.disabled = true;
+
+    texto3 = document.createElement('label');
+    texto3.innerHTML= "<b>e-mail</b>";
+    texto3.className="w3-text-teal";
+    entraMail = document.createElement('input');
+    entraMail.className="w3-input w3-border w3-sand";
+    entraMail.id = "email";
+
+    botaoSubmete = document.createElement('button');
+    botaoSubmete.innerHTML = "Submeter";
+    botaoSubmete.className = "w3-button w3-teal";
+    botaoSubmete.addEventListener("click",submeteForm);
+
 
     formulario.appendChild(texto);
     formulario.appendChild(entraNome);
+
     formulario.appendChild(texto2);
     formulario.appendChild(entraCep);
+    formulario.appendChild(labelEndereco);
+    formulario.appendChild(endereco);
+    formulario.appendChild(texto3);
+    formulario.appendChild(entraMail);
+    formulario.appendChild(botaoSubmete);
+
 
     caixa.appendChild(cabecaCaixa);
     caixa.appendChild(formulario);
@@ -84,7 +145,7 @@ function executaListar() {
             dado.forEach( item => {
                 novoItem = document.createElement('li');
                 novoItem.className="w3-display-container";
-                novoItem.innerHTML = item;
+                novoItem.innerHTML = item.split('|')[0];
                 x = document.createElement('span');
                 x.className="w3-button w3-transparent w3-display-right";
                 x.innerHTML = "&times;";
@@ -108,7 +169,7 @@ function apagaUsuario(ele){
 
 
 function main() {
-	barraMenu = document.createElement('div');
+    barraMenu = document.createElement('div');
     barraMenu.className = "w3-bar w3-light-grey";
 
     opcaoSobre = document.createElement('a');

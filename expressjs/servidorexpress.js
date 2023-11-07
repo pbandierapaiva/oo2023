@@ -51,11 +51,12 @@ servidor.get('/listar/:uid', (req,res) => {
 })
 
 servidor.put('/', (req, res) => {
+	console.log("No método PUT");
 	console.log(req.body);
 	res.writeHead(200, {'Content-Type': 'text/html'});
-	res.write("<h2>Dados recebidos!</h2>");
+	res.write("Dados inseridos!");
 	
-	arq.servidorendFile("nomes.txt", req.body.nome+"\n", 
+	arq.appendFile("nomes.txt", req.body.nome+"|"+ req.body.cep+"|"+ req.body.email+"\n", 
 		(err) => { 
 		if (err) { 
 			console.log(err); 
@@ -73,9 +74,14 @@ servidor.get('/cep/:numero', (req, res) => {
 
     execute("grep ^"+numcep+" /home/pub/datasets/ceps.txt",
 		(error, stdout, stderr) => { 
-			let dados = stdout.split('\t')
-			retorno = { 'cidade' : dados[1],
-				'rua' : dados[3].split(' - ')[0]};
+
+			if( stdout=='')
+				retorno = { 'status':'ERRO' };
+			else {
+				let dados = stdout.split('\t')
+				retorno = { 'status':'OK', 'cidade' : dados[1],
+					'rua' : dados[3].split(' - ')[0]};
+			}
 			console.log(retorno);
 			res.json(retorno);
 			});
