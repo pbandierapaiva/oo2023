@@ -25,6 +25,7 @@ servidor.get('/sobre', (req, res) => {
 
 servidor.get('/listar', (req, res) => {
 	console.log("processando /listar")
+	retorno = { 'status':'ERRO', 'resultado':[]};
 	arq.readFile('nomes.txt', 'utf8', (err, dados) => {
 		if (err) {
 		    console.error(err);
@@ -32,13 +33,27 @@ servidor.get('/listar', (req, res) => {
 		    }
 		let nomes = dados.split("\n");
 		nomes.pop();
-		res.json( nomes );
+
+		let i =0;
+		nomes.forEach(elemento => {
+			registro = elemento.split("|");
+			retorno['status'] = 'OK';
+			retorno['resultado'].push(  { 
+					'nome'  : registro[0],
+					'cep'   : registro[1],
+					'email' : registro[2],
+					'linha' : i
+				});
+			i++;
+		});
+
+		res.json( retorno );
 		})
 })
 
 servidor.get('/listar/:uid', (req,res) => {
 	console.log("processando /listar com parametro: "+req.params['uid'])
-
+	retorno = { 'status':'ERRO'};
 	let id = req.params['uid'];
 	arq.readFile('nomes.txt', 'utf8', (err, dados) => {
 		if (err) {
@@ -46,8 +61,36 @@ servidor.get('/listar/:uid', (req,res) => {
 		    return;
 		    }
 		let nomes = dados.split("\n");
-		res.json({'nome': nomes[id]} );
+
+		registro = nomes[id].split("|");
+		retorno =  { 
+				'status': 'OK',
+				'nome'  : registro[0],
+				'cep'   : registro[1],
+				'email' : registro[2]
+			};
+
+		res.json( retorno );
 	})
+})
+
+servidor.delete('/usuario/:uid', (req,res) => {
+	console.log("Removendo usuário");
+	let uid = req.params['uid'];
+
+	arq.readFile('nomes.txt', 'utf8', (err, dados) => {
+			if (err) {
+				console.error(err);
+				return;
+				}
+			let nomes = dados.split("\n");
+			nomes.splice(uid,1);
+			arq.writeFile('nomes.txt',nomes.join('\n'), (err) => {
+					if (err) throw err;
+					console.log('The file has been saved!');
+				})
+		})
+	res.json( {'status':'OK'} );
 })
 
 servidor.put('/', (req, res) => {

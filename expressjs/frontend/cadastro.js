@@ -23,7 +23,7 @@ function buscaCep( ) {
 			return( resposta.json() );
 		}).then( dado => {
             if( dado['status']=='ERRO' )
-                alert("Logradouro não encontrado");
+                alerta("Logradouro não encontrado");
             else {
                 // let saiDiv = document.getElementById('principal');
                 document.getElementById('logradouro').value = dado['rua']+", "+dado['cidade'];
@@ -53,7 +53,7 @@ function submeteForm() {
                 return( resposta.text() );
             })
             .then( dadoRetornado => {
-                alert(dadoRetornado);
+                alerta(dadoRetornado);
                 // document.getElementById('saida').innerHTML = dadoRetornado;
                 // document.getElementById("cpoNome").value ='';
                 // populaSelect();
@@ -136,16 +136,17 @@ function executaListar() {
 			return( resposta.json() );
 		})
 		.then( dado => {
-
+            
             janelaPrincipal = document.getElementById('principal');
             janelaPrincipal.innerHTML = "";
 
             lista = document.createElement('ul');
             lista.className = "w3-ul w3-card-4"
-            dado.forEach( item => {
+            dado['resultado'].forEach( item => {
                 novoItem = document.createElement('li');
                 novoItem.className="w3-display-container";
-                novoItem.innerHTML = item.split('|')[0];
+                novoItem.innerHTML = item['nome'];
+                novoItem.value = item['linha'];
                 x = document.createElement('span');
                 x.className="w3-button w3-transparent w3-display-right";
                 x.innerHTML = "&times;";
@@ -164,8 +165,58 @@ function executaListar() {
     }
 
 function apagaUsuario(ele){
-    this.parentElement.style.display = 'none';
+    // this.parentElement.style.display = 'none';
+    if( confirm("Confirma remoção de usuário?") ){
+        fetch('/usuario/'+ this.parentElement.value, {
+            method: 'DELETE',
+            headers: {
+                    'Content-Type': 'application/json',
+                      }
+            }).then( resposta => {
+                if(!resposta.ok) {
+                    throw new Error('Resposta da rede n&atilde;o estava ok');
+                }
+                return( resposta.json() );
+            }).then( dado => {
+                if( dado['status']=='OK' ) {
+                    executaListar();
+                }
+                else {
+                    alert("Erro na remoção do registro");
+                }
+            })
     }
+    }
+
+function alerta(mensagem) {
+
+    caixa = document.createElement('div');
+    caixa.className = "w3-modal";
+    conteudo =  document.createElement('div');
+    conteudo.className = "w3-modal-content";
+    cabecalho = document.createElement('header');
+    cabecalho.className = "w3-container w3-teal";
+    cabecalho.innerHTML = "Atenção";
+    x = document.createElement('span');
+    x.className="w3-button w3-display-right";
+    x.innerHTML = "&times;";
+    x.addEventListener("click", () =>  {
+        this.parentElement.style.display = 'none';
+    } ); 
+    areaMensagem = document.createElement('div');
+    areaMensagem.className = "w3-container";
+    areaMensagem.innerHTML= "<p>"+mensagem+"</p>";
+
+    cabecalho.appendChild(x);
+    conteudo.appendChild(cabecalho);
+    conteudo.appendChild(areaMensagem);
+    caixa.appendChild(conteudo);
+
+    areaCaixaDialogo = document.getElementById('areacd');
+    areaCaixaDialogo.innerHTML = "";
+    areaCaixaDialogo.appendChild(caixa);
+    caixa.style.display = 'block';
+}
 
 
 function main() {
@@ -208,5 +259,10 @@ function main() {
     principal = document.createElement('div');
     principal.id = "principal";
     principal.className = "w3-container";
+
+    areaCaixaDialogo= document.createElement('div');
+    areaCaixaDialogo.id = "areacd";
+    
     document.body.appendChild(principal);
+    document.body.appendChild(areaCaixaDialogo);
 }
