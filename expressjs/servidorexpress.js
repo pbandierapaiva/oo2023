@@ -10,7 +10,7 @@ servidor.use(express.json());
 servidor.use(express.static('frontend'))
 
 servidor.get('/', (req, res) => {
-	res.redirect('/cadastro.html');
+	res.redirect('/brythonfe.html');
 })
 
 servidor.get('/antigo', (req, res) => {
