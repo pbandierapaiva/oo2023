@@ -14,7 +14,7 @@ servidor.get('/', (req, res) => {
 })
 
 servidor.get('/antigo', (req, res) => {
-	res.redirect('/frontend.html');
+	res.redirect('/cadastro.html');
 })
 
 servidor.get('/sobre', (req, res) => {

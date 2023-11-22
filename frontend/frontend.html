@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+<title>Frontend HTML</title>
+<!-- W3CSS -->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+
+<script src='frontend.js'></script>
+</head>
+
+<body onload="main()">
+<div class="w3-container">
+	<h1>Frontend em HTML</h1> 
+	<div id="identifica" class="w3-card-4">
+	    <div class="w3-container w3-padding-large">
+		<input class="w3-input" id='cpoNome' ></input>
+		<button class="w3-btn w3-blue" id='submete' onclick='submeter()'>Enviar</button>
+		<button class="w3-btn w3-blue w3-right" onclick='getSobre()'>Sobre	</button>
+		<div  class="w3-card-4">
+			Selecione o usuário:
+			<select class="w3-select" nome='pessoa' id='selecPessoa' onchange='selecionou()' >
+			</select>
+		</div>
+	</div>
+	</div>
+	<div class="w3-container w3-padding-large">
+		<div id='saida' class="w3-card-4 w3-padding" hidden></div>
+	</div>
+</div>
+
+
+
+
+
+</body>
+
+</html>
